@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>AiCoN Admin</title>
+<meta name="description" content="AiCoN admin dashboard: compose, preview and publish posts to aicon-hub.github.io."/>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" href="icon.svg" type="image/svg+xml"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<meta name="theme-color" content="#090909"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="app.css"/>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><img src="icon.svg" alt="" width="26" height="26"/><span>AiCoN <b>Admin</b></span></div>
+  <div class="conn" id="conn" title="Connection status"><span class="dot" id="conn-dot"></span><span id="conn-text">not connected</span></div>
+</header>
+
+<main id="main">
+
+  <!-- ============ COMPOSE ============ -->
+  <section class="tab active" id="tab-new">
+    <div class="card">
+      <label class="fld"><span>Post type</span>
+        <select id="f-type"></select>
+      </label>
+      <div class="type-extra" id="type-extra"></div>
+
+      <label class="fld"><span>Title</span>
+        <input id="f-title" type="text" placeholder="App or tool name: what it does in a few words" autocomplete="off"/>
+      </label>
+
+      <div class="row2">
+        <label class="fld"><span>Tag (chip on article)</span><input id="f-chip" type="text"/></label>
+        <label class="fld"><span>Category</span><select id="f-cat"></select></label>
+      </div>
+
+      <div class="row2">
+        <label class="fld"><span>Date</span><input id="f-date" type="date"/></label>
+        <label class="fld"><span>Slug (file name)</span><input id="f-slug" type="text" autocomplete="off" spellcheck="false"/></label>
+      </div>
+
+      <label class="fld"><span>Summary <small>(card + search description, 1-2 lines)</small></span>
+        <textarea id="f-summary" rows="2" placeholder="What it is, who it is for, the one thing to know."></textarea>
+      </label>
+
+      <label class="fld"><span>Lead paragraph <small>(first thing readers see)</small></span>
+        <textarea id="f-lead" rows="3"></textarea>
+      </label>
+
+      <label class="fld"><span>Quick facts <small>(one per line, optional)</small></span>
+        <textarea id="f-facts" rows="3" placeholder="Free, no account needed&#10;Works on Android 8 and up"></textarea>
+      </label>
+
+      <label class="fld"><span>Article body</span>
+        <textarea id="f-body" rows="10" placeholder="## What it does&#10;Plain lines become paragraphs.&#10;&#10;## How to use it&#10;1. First step&#10;2. Second step&#10;&#10;## Limits&#10;- One limit per line"></textarea>
+      </label>
+      <p class="hint">Markup: <code>## heading</code> &middot; <code>- bullet</code> &middot; <code>1. step</code> &middot; <code>&gt; note</code> &middot; everything else is a paragraph.</p>
+
+      <div class="row2">
+        <label class="fld"><span>Deadline <small>(optional)</small></span><input id="f-deadline" type="date"/></label>
+        <label class="fld"><span>Deadline label</span><input id="f-deadline-label" type="text" placeholder="Applications close 11:59 PM"/></label>
+      </div>
+
+      <label class="fld"><span>Official links <small>(one per line: Label | URL)</small></span>
+        <textarea id="f-links" rows="3" placeholder="Official site | https://example.com&#10;Play Store | https://play.google.com/..."></textarea>
+      </label>
+
+      <label class="fld"><span>Icon / logo <small>(optional, committed with the post)</small></span>
+        <input id="f-icon" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"/>
+      </label>
+      <div id="icon-preview"></div>
+
+      <label class="chk"><input type="checkbox" id="f-tested"/> <span>Tested by AiCoN <small>(adds a tested note to the article)</small></span></label>
+
+      <div class="btnrow">
+        <button class="btn ghost" id="btn-clear" type="button">Clear</button>
+        <button class="btn" id="btn-preview" type="button">Preview</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PREVIEW ============ -->
+  <section class="tab" id="tab-preview">
+    <div class="card">
+      <p class="hint">Approximate preview using the live site styles. The real page may differ slightly.</p>
+      <iframe id="preview-frame" title="Article preview"></iframe>
+      <div class="btnrow">
+        <button class="btn ghost" id="btn-back-edit" type="button">Back to edit</button>
+        <button class="btn primary" id="btn-to-publish" type="button">Looks good, publish</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PUBLISH ============ -->
+  <section class="tab" id="tab-publish">
+    <div class="card" id="publish-card">
+      <h2>Publish</h2>
+      <div id="publish-summary"></div>
+      <div class="btnrow">
+        <button class="btn ghost" id="btn-pub-back" type="button">Back</button>
+        <button class="btn primary" id="btn-publish" type="button">Publish to site</button>
+      </div>
+      <pre id="publish-log" class="log" hidden></pre>
+      <div id="publish-result"></div>
+    </div>
+  </section>
+
+  <!-- ============ ASSETS ============ -->
+  <section class="tab" id="tab-assets">
+    <div class="card">
+      <h2>Push icons and images</h2>
+      <p class="hint">Upload icons, logos or posters straight into the website repo. They go live with the next site rebuild (about a minute).</p>
+      <label class="fld"><span>Folder in repo</span>
+        <select id="a-folder">
+          <option value="assets/2026/howto/">assets/2026/howto/ (post logos and screenshots)</option>
+          <option value="assets/og/">assets/og/ (share images)</option>
+          <option value="assets/2026/">assets/2026/ (site graphics)</option>
+          <option value="custom">Custom path...</option>
+        </select>
+      </label>
+      <label class="fld" id="a-custom-wrap" hidden><span>Custom folder path</span><input id="a-custom" type="text" placeholder="assets/2026/howto/" spellcheck="false"/></label>
+      <label class="fld"><span>Files</span><input id="a-files" type="file" multiple accept="image/*,.svg"/></label>
+      <ul id="a-list" class="filelist"></ul>
+      <div class="btnrow"><button class="btn primary" id="btn-assets-push" type="button">Push to repo</button></div>
+      <pre id="assets-log" class="log" hidden></pre>
+    </div>
+  </section>
+
+  <!-- ============ POSTS ============ -->
+  <section class="tab" id="tab-posts">
+    <div class="card">
+      <h2>Latest on the site</h2>
+      <p class="hint">Newest guides as readers see them.</p>
+      <ul id="posts-list" class="postslist"></ul>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section class="tab" id="tab-settings">
+    <div class="card">
+      <h2>Connection</h2>
+      <label class="fld"><span>GitHub token <small>(fine-grained, stays in this browser only)</small></span>
+        <input id="s-token" type="password" placeholder="github_pat_..." autocomplete="off" spellcheck="false"/>
+      </label>
+      <label class="fld"><span>Website repo</span><input id="s-repo" type="text" value="aicon-hub/aicon-hub.github.io" spellcheck="false"/></label>
+      <div class="btnrow">
+        <button class="btn" id="btn-test" type="button">Test connection</button>
+        <button class="btn ghost" id="btn-save" type="button">Save</button>
+        <button class="btn danger" id="btn-forget" type="button">Forget token</button>
+      </div>
+      <pre id="settings-log" class="log" hidden></pre>
+    </div>
+    <div class="card">
+      <h2>Create the token (one time)</h2>
+      <ol class="steps">
+        <li>Open <b>github.com</b> &rarr; your photo &rarr; <b>Settings</b> &rarr; <b>Developer settings</b> &rarr; <b>Personal access tokens</b> &rarr; <b>Fine-grained tokens</b> &rarr; <b>Generate new token</b>.</li>
+        <li>Name: <b>aicon-admin</b>. Expiration: 90 days.</li>
+        <li>Repository access: <b>Only select repositories</b> &rarr; pick <b>aicon-hub.github.io</b>.</li>
+        <li>Permissions &rarr; Repository permissions: set <b>Contents: Read and write</b>. Also set <b>Actions: Read and write</b> if you want the one-tap Telegram publish button.</li>
+        <li>Generate, copy the token, paste it above and tap Save.</li>
+      </ol>
+      <p class="hint">The token is stored only in this browser's local storage. It is never sent anywhere except api.github.com, and it is never committed to any repo.</p>
+    </div>
+    <div class="card">
+      <h2>About</h2>
+      <p class="hint">AiCoN Admin publishes guides to aicon-hub.github.io through the GitHub API. Each publish is one commit: the article, its card on the posts page, and any icon you attached. The site's build then refreshes search, the home page and the sitemap.</p>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar">
+  <button data-tab="tab-new" class="active"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>New</span></button>
+  <button data-tab="tab-preview"><svg viewBox="0 0 24 24"><path d="M3 12c3-5 6-7 9-7s6 2 9 7c-3 5-6 7-9 7s-6-2-9-7z"/><circle cx="12" cy="12" r="2.5"/></svg><span>Preview</span></button>
+  <button data-tab="tab-publish"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span>Publish</span></button>
+  <button data-tab="tab-assets"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5-9 9"/></svg><span>Assets</span></button>
+  <button data-tab="tab-posts"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>Posts</span></button>
+  <button data-tab="tab-settings"><svg viewBox="0 0 24 24"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2.2"/><circle cx="8" cy="16" r="2.2"/></svg><span>Setup</span></button>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>
