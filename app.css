@@ -131,3 +131,4 @@ input[type=file]{font-size:.88rem;color:var(--mute);width:100%}
 .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .pill{font-size:.78rem;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--mute)}
 .pill b{color:var(--ink)}
+[data-theme="light"] input[type=text],[data-theme="light"] input[type=date],[data-theme="light"] input[type=password],[data-theme="light"] select,[data-theme="light"] textarea{background:#fff}
